@@ -1,73 +1,188 @@
-# Welcome to your Lovable project
+# Maish Sale Sync - Cross-Platform App
 
-## Project info
+A React-based sales management application converted to cross-platform desktop and mobile apps using Electron and Capacitor.
 
-**URL**: https://lovable.dev/projects/a95ae578-39ee-4b61-bbee-4456529be901
+## Features
 
-## How can I edit this code?
+- User authentication (signup/login)
+- Sales creation and management
+- JWT authentication
+- File uploads (receipts)
+- Responsive design
+- Offline sync capabilities
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
+- `src/` - React application source code
+- `electron/` - Electron desktop app configuration
+- `resources/` - Mobile app icons and splash screens
+- `capacitor.config.ts` - Capacitor configuration
+- `backend/` - Backend API (separate project)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a95ae578-39ee-4b61-bbee-4456529be901) and start prompting.
+## Backend
 
-Changes made via Lovable will be committed automatically to this repo.
+The app connects to a backend API at `https://maish-sale-backend-k5ur.vercel.app/`.
 
-**Use your preferred IDE**
+## Development
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js 18+
+- npm or yarn
+- For mobile development: Android Studio (for Android), Xcode (for iOS)
+- For desktop development: No additional tools needed
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Create a `.env` file in the root directory:
 
-**Use GitHub Codespaces**
+```env
+VITE_SUPABASE_PROJECT_ID=your_supabase_project_id
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
+VITE_SUPABASE_URL=your_supabase_url
+VITE_API_BASE_URL=https://maish-sale-backend-k5ur.vercel.app
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Building and Running
 
-## What technologies are used for this project?
+### Web App
 
-This project is built with:
+```bash
+npm run dev  # Development server
+npm run build  # Production build
+npm run preview  # Preview production build
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Desktop App (Electron)
 
-## How can I deploy this project?
+#### Development
 
-Simply open [Lovable](https://lovable.dev/projects/a95ae578-39ee-4b61-bbee-4456529be901) and click on Share -> Publish.
+```bash
+npm run electron:dev  # Runs React dev server + Electron
+```
 
-## Can I connect a custom domain to my Lovable project?
+#### Production Build
 
-Yes, you can!
+```bash
+# Build for all platforms
+npm run electron:build
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Build for specific platforms
+npm run electron:build:win    # Windows
+npm run electron:build:mac    # macOS
+npm run electron:build:linux  # Linux
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+The built executables will be in `dist-electron/` directory.
+
+### Mobile Apps (Capacitor)
+
+#### Development
+
+```bash
+npm run cap:build  # Build React app
+npm run cap:sync   # Sync web assets to mobile projects
+npm run cap:android  # Open Android Studio
+npm run cap:ios      # Open Xcode
+```
+
+#### Production Build
+
+```bash
+# For Android
+npm run mobile:build:android
+
+# For iOS
+npm run mobile:build:ios
+```
+
+## Mobile App Configuration
+
+- **App ID**: `com.maishsalesync.app`
+- **App Name**: `Maish Sale Sync`
+- **Icons**: Located in `resources/icon.png`
+- **Splash Screen**: Located in `resources/splash.png`
+
+### File Uploads on Mobile
+
+The app supports file uploads for receipts. On mobile devices:
+- File input works for gallery selection
+- Camera plugin is configured for photo capture
+- Permissions are automatically requested
+
+## Deployment
+
+### Desktop Apps
+
+The Electron builder generates:
+- `.exe` for Windows
+- `.dmg` for macOS
+- `.AppImage` for Linux
+
+For code signing:
+1. Obtain code signing certificates
+2. Configure `build` section in `package.json` with certificate paths
+3. Use `CSC_LINK` and `CSC_KEY_PASSWORD` environment variables
+
+### Mobile Apps
+
+#### Android
+
+1. Open the project in Android Studio
+2. Build APK/AAB
+3. Sign the APK for release
+4. Upload to Google Play Store
+
+#### iOS
+
+1. Open the project in Xcode
+2. Configure signing certificates
+3. Build IPA
+4. Upload to App Store Connect
+
+### Signing and Certificates
+
+#### Windows
+- Use `electron-builder` with `certificateFile` and `certificatePassword`
+
+#### macOS
+- Use `electron-builder` with `identity` or certificate files
+
+#### Android
+- Use Android Studio or command line tools for APK signing
+
+#### iOS
+- Use Xcode for code signing with Apple Developer certificates
+
+## Troubleshooting
+
+### Electron Issues
+- Ensure Node.js version compatibility
+- Check icon paths in `electron/main.js`
+
+### Capacitor Issues
+- Run `npm run cap:sync` after building
+- Ensure Android Studio/XCode are installed
+- Check Capacitor version compatibility
+
+### Mobile Permissions
+- Camera permissions are handled automatically
+- File access permissions are included in the build
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes
+4. Test on all platforms
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
