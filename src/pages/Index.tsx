@@ -2,19 +2,59 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store, DollarSign, TrendingUp, Users, ArrowRight } from 'lucide-react';
-import { useEffect } from 'react';
+import { Store, DollarSign, TrendingUp, Users, ArrowRight, Download } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import loggo from '../loggo.png';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
       navigate('/dashboard');
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstallable(false);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstallable(false);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      setIsInstallable(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   if (loading) {
     return null;
@@ -59,7 +99,17 @@ const Index = () => {
             Maish Boutique's employee commission tracker. Record sales, upload receipts,
             and track your 2% commission in real-time.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
+          <div className="flex gap-4 justify-center pt-4 flex-wrap">
+            {isInstallable && (
+              <Button
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 shadow-lg text-lg mb-4"
+                onClick={handleInstallClick}
+              >
+                <Download className="mr-2 h-5 w-5" />
+                Download App
+              </Button>
+            )}
             <Button
               size="lg"
               className="bg-gradient-primary hover:opacity-90 shadow-primary text-lg"
