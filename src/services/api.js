@@ -5,6 +5,8 @@ const getAuthToken = () => localStorage.getItem('token');
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
+  console.log('API Response:', response.status, response.statusText, response.url);
+
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
       // Token expired or invalid, clear it and redirect to login
@@ -12,9 +14,24 @@ const handleResponse = async (response) => {
       window.location.href = '/login';
       throw new Error('Authentication required');
     }
-    const error = await response.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || `HTTP ${response.status}`);
+
+    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      console.log('Error response data:', errorData);
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch (e) {
+      console.log('Could not parse error response:', e);
+      const text = await response.text().catch(() => '');
+      if (text) {
+        console.log('Error response text:', text);
+        errorMessage = text;
+      }
+    }
+
+    throw new Error(errorMessage);
   }
+
   return response.json();
 };
 
