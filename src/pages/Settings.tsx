@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+// import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,37 +36,41 @@ const Settings = () => {
   }, []);
 
   const loadProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user?.id)
-        .single();
+    // Profile loading disabled - backend integration needed
+    // try {
+    //   const { data, error } = await supabase
+    //     .from('profiles')
+    //     .select('full_name')
+    //     .eq('id', user?.id)
+    //     .single();
 
-      if (error) throw error;
-      setFullName(data.full_name);
-    } catch (error: any) {
-      toast.error('Failed to load profile');
-    }
+    //   if (error) throw error;
+    //   setFullName(data.full_name);
+    // } catch (error: any) {
+    //   toast.error('Failed to load profile');
+    // }
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ full_name: fullName.trim() })
-        .eq('id', user?.id);
+    // Profile update disabled - backend integration needed
+    // try {
+    //   const { error } = await supabase
+    //     .from('profiles')
+    //     .update({ full_name: fullName.trim() })
+    //     .eq('id', user?.id);
 
-      if (error) throw error;
-      toast.success('Profile updated successfully');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update profile');
-    } finally {
-      setLoading(false);
-    }
+    //   if (error) throw error;
+    //   toast.success('Profile updated successfully');
+    // } catch (error: any) {
+    //   toast.error(error.message || 'Failed to update profile');
+    // } finally {
+    //   setLoading(false);
+    // }
+    toast.info('Profile update not available - backend integration required');
+    setLoading(false);
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -84,21 +88,24 @@ const Settings = () => {
 
     setLoading(true);
 
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
+    // Password change disabled - backend integration needed
+    // try {
+    //   const { error } = await supabase.auth.updateUser({
+    //     password: newPassword,
+    //   });
 
-      if (error) throw error;
+    //   if (error) throw error;
 
-      toast.success('Password changed successfully');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to change password');
-    } finally {
-      setLoading(false);
-    }
+    //   toast.success('Password changed successfully');
+    //   setNewPassword('');
+    //   setConfirmPassword('');
+    // } catch (error: any) {
+    //   toast.error(error.message || 'Failed to change password');
+    // } finally {
+    //   setLoading(false);
+    // }
+    toast.info('Password change not available - backend integration required');
+    setLoading(false);
   };
 
   return (
@@ -163,15 +170,15 @@ const Settings = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="email"
-                  value={user?.email || ''}
+                  id="username"
+                  value={user?.username || ''}
                   disabled
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Email cannot be changed
+                  Username cannot be changed
                 </p>
               </div>
               <Button
