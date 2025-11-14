@@ -100,35 +100,45 @@ export const login = async (data) => {
 };
 
 export const createSale = async (saleData, receiptFile) => {
-  try {
-    const formData = new FormData();
-    formData.append('item_description', saleData.item_description || saleData.itemName);
-    formData.append('amount', saleData.amount);
-
-    if (receiptFile) {
-      formData.append('receipt', receiptFile);
-    }
-
-    const response = await fetch(`${API_BASE_URL}/sales/createSale`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-      },
-      body: formData,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    throw error;
-  }
+  // Temporarily using mock data for testing - CORS issues with backend
+  console.log('Using mock createSale - backend CORS issues');
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id: Date.now(),
+        item_description: saleData.item_description || saleData.itemName,
+        amount: saleData.amount,
+        commission: saleData.amount * 0.02,
+        created_at: new Date().toISOString(),
+        receipt_url: receiptFile ? 'mock-receipt-url' : null
+      });
+    }, 1000);
+  });
 };
 
 export const getSales = async () => {
-  try {
-    return await authRequest('/sales/getSales');
-  } catch (error) {
-    throw error;
-  }
+  // Temporarily using mock data for testing - CORS issues with backend
+  console.log('Using mock getSales - backend CORS issues');
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        {
+          id: 1,
+          item_description: 'Sample Dress',
+          amount: 2500,
+          commission: 50,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 2,
+          item_description: 'Blue Jeans',
+          amount: 1800,
+          commission: 36,
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        }
+      ]);
+    }, 500);
+  });
 };
 
 export const checkHealth = async () => {
