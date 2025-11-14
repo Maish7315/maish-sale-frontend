@@ -54,91 +54,73 @@ const authRequest = (url, options = {}) => {
 
 // API functions
 export const signup = async (data) => {
-  // Temporarily using mock data for testing - backend connection issues
-  console.log('Using mock signup - backend not available');
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Create a proper JWT-like token that can be decoded
-      const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-      const payload = btoa(JSON.stringify({
-        id: Date.now(),
-        username: data.username,
-        role: 'staff',
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 3600
-      })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-      const signature = 'mock_signature';
-      const mockToken = `${header}.${payload}.${signature}`;
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await handleResponse(response);
 
-      localStorage.setItem('token', mockToken);
-      resolve({ token: mockToken, user: { id: Date.now(), username: data.username, role: 'staff' } });
-    }, 1000);
-  });
+    if (result.token) {
+      localStorage.setItem('token', result.token);
+    }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const login = async (data) => {
-  // Temporarily using mock data for testing - backend connection issues
-  console.log('Using mock login - backend not available');
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Create a proper JWT-like token that can be decoded
-      const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-      const payload = btoa(JSON.stringify({
-        id: Date.now(),
-        username: data.username,
-        role: 'staff',
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 3600
-      })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-      const signature = 'mock_signature';
-      const mockToken = `${header}.${payload}.${signature}`;
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await handleResponse(response);
 
-      localStorage.setItem('token', mockToken);
-      resolve({ token: mockToken, user: { id: Date.now(), username: data.username, role: 'staff' } });
-    }, 1000);
-  });
+    if (result.token) {
+      localStorage.setItem('token', result.token);
+    }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createSale = async (saleData, receiptFile) => {
-  // Temporarily using mock data for testing - CORS issues with backend
-  console.log('Using mock createSale - backend CORS issues');
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: Date.now(),
-        item_description: saleData.item_description || saleData.itemName,
-        amount: saleData.amount,
-        commission: saleData.amount * 0.02,
-        created_at: new Date().toISOString(),
-        receipt_url: receiptFile ? 'mock-receipt-url' : null
-      });
-    }, 1000);
-  });
+  try {
+    const formData = new FormData();
+    formData.append('item_description', saleData.item_description || saleData.itemName);
+    formData.append('amount', saleData.amount);
+
+    if (receiptFile) {
+      formData.append('receipt', receiptFile);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/sales/createSale`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getSales = async () => {
-  // Temporarily using mock data for testing - CORS issues with backend
-  console.log('Using mock getSales - backend CORS issues');
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          item_description: 'Sample Dress',
-          amount: 2500,
-          commission: 50,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 2,
-          item_description: 'Blue Jeans',
-          amount: 1800,
-          commission: 36,
-          created_at: new Date(Date.now() - 86400000).toISOString()
-        }
-      ]);
-    }, 500);
-  });
+  try {
+    return await authRequest('/sales/getSales');
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const checkHealth = async () => {
