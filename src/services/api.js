@@ -37,57 +37,73 @@ const authRequest = (url, options = {}) => {
 
 // API functions
 export const signup = async (data) => {
-  // Mock signup for frontend-only testing
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const mockToken = btoa(JSON.stringify({ id: 1, username: data.username, role: 'staff' }));
-      localStorage.setItem('token', mockToken);
-      resolve({ token: mockToken, user: { id: 1, username: data.username, role: 'staff' } });
-    }, 1000);
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await handleResponse(response);
+
+    if (result.token) {
+      localStorage.setItem('token', result.token);
+    }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const login = async (data) => {
-  // Mock login for frontend-only testing
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const mockToken = btoa(JSON.stringify({ id: 1, username: data.username, role: 'staff' }));
-      localStorage.setItem('token', mockToken);
-      resolve({ token: mockToken, user: { id: 1, username: data.username, role: 'staff' } });
-    }, 1000);
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await handleResponse(response);
+
+    if (result.token) {
+      localStorage.setItem('token', result.token);
+    }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createSale = async (saleData, receiptFile) => {
-  // Mock createSale for frontend-only testing
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: Date.now(),
-        item_description: saleData.item_description || saleData.itemName,
-        amount: saleData.amount,
-        commission: saleData.amount * 0.02,
-        created_at: new Date().toISOString()
-      });
-    }, 1000);
-  });
+  try {
+    const formData = new FormData();
+    formData.append('item_description', saleData.item_description || saleData.itemName);
+    formData.append('amount', saleData.amount);
+
+    if (receiptFile) {
+      formData.append('receipt', receiptFile);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/sales/createSale`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getSales = async () => {
-  // Mock getSales for frontend-only testing
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          item_description: 'Sample Dress',
-          amount: 2500,
-          commission: 50,
-          created_at: new Date().toISOString()
-        }
-      ]);
-    }, 500);
-  });
+  try {
+    return await authRequest('/sales/getSales');
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const checkHealth = async () => {
