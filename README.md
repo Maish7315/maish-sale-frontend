@@ -59,6 +59,21 @@ npm run build  # Production build
 npm run preview  # Preview production build
 ```
 
+### Netlify Deployment
+
+The app is configured for easy Netlify deployment:
+
+1. Connect your GitHub repository to Netlify
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
+4. Configure environment variables in Netlify dashboard:
+   - `VITE_SUPABASE_PROJECT_ID`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - `VITE_SUPABASE_URL`
+   - `VITE_API_BASE_URL=https://maish-sale-backend-k5ur.vercel.app`
+
+The `netlify.toml` and `public/_redirects` files handle SPA routing automatically.
+
 ### Desktop App (Electron)
 
 #### Development
