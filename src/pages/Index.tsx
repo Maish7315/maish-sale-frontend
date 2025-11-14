@@ -20,12 +20,14 @@ const Index = () => {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
     };
 
     const handleAppInstalled = () => {
+      console.log('appinstalled event fired');
       setIsInstallable(false);
       setDeferredPrompt(null);
     };
@@ -35,7 +37,17 @@ const Index = () => {
 
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('App is already installed (standalone mode)');
       setIsInstallable(false);
+    } else {
+      console.log('App is not installed, checking for installability');
+      // For testing, let's assume it's installable
+      setTimeout(() => {
+        if (!deferredPrompt) {
+          console.log('No deferred prompt, but showing button for testing');
+          setIsInstallable(true);
+        }
+      }, 2000);
     }
 
     return () => {
@@ -45,15 +57,19 @@ const Index = () => {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
 
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === 'accepted') {
-      setIsInstallable(false);
+      if (outcome === 'accepted') {
+        setIsInstallable(false);
+      }
+      setDeferredPrompt(null);
+    } else {
+      // Fallback: try to trigger browser's install prompt
+      console.log('No deferred prompt available, install manually via browser');
+      alert('Please use your browser\'s install button (usually in the address bar) to install the app.');
     }
-    setDeferredPrompt(null);
   };
 
   if (loading) {
