@@ -22,4 +22,11 @@
   minify = true
 
 [build.processing.html]
-  pretty_urls = true
+   pretty_urls = true
+
+# Proxy API requests to avoid CORS issues
+[[redirects]]
+  from = "/api/*"
+  to = "https://maish-sale-backend.vercel.app/api/:splat"
+  status = 200
+  headers = {X-Forwarded-Host = "maishsale.netlify.app"}
