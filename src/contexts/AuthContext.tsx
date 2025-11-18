@@ -75,16 +75,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         duration: 5000,
       });
 
-      // Sync local sales to backend if any exist
-      try {
-        const { syncLocalSalesToBackend } = await import('@/services/api');
-        await syncLocalSalesToBackend();
-        toast.success('Local sales synced to backend');
-      } catch (error) {
-        console.error('Sync failed:', error);
-        // Don't throw here, login was successful
-      }
-
       navigate('/dashboard');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';

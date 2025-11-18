@@ -51,19 +51,11 @@ const Dashboard = () => {
 
   const loadSales = async () => {
     try {
-      // Try to get sales from backend first
       const backendSales = await getSales();
       setSales(backendSales);
-    } catch (backendError) {
-      console.warn('Failed to load from backend, falling back to local storage:', backendError);
-      try {
-        // Fallback to local storage
-        const storedSales = getSalesFromStorage();
-        setSales(storedSales);
-      } catch (localError) {
-        console.error('Failed to load sales from both backend and local storage:', localError);
-        toast.error('Failed to load sales data');
-      }
+    } catch (error) {
+      console.error('Failed to load sales from backend:', error);
+      toast.error('Failed to load sales data');
     } finally {
       setLoading(false);
     }

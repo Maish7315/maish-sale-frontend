@@ -85,22 +85,11 @@ export const SalesForm = ({ onSaleAdded }: SalesFormProps) => {
 
       setLoading(true);
 
-      try {
-        // Try to save to backend first
-        await createSale({
-          item_description: validated.itemName,
-          amount: validated.amount,
-        }, receiptFile);
-        toast.success(`Sale recorded successfully! Commission: KES ${commission.toFixed(2)}`);
-      } catch (backendError) {
-        console.warn('Backend save failed, saving locally:', backendError);
-        // Fallback to local storage
-        await saveSaleLocally({
-          itemName: validated.itemName,
-          amount: validated.amount,
-        }, receiptFile);
-        toast.success(`Sale recorded locally! Will sync when online. Commission: KES ${commission.toFixed(2)}`);
-      }
+      await createSale({
+        item_description: validated.itemName,
+        amount: validated.amount,
+      }, receiptFile);
+      toast.success(`Sale recorded successfully! Commission: KES ${commission.toFixed(2)}`);
 
       toast.success(`Sale recorded! Commission: KES ${commission.toFixed(2)}`);
 

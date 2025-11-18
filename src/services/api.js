@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://maish-sale-backend.vercel.app';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://maish-sale-backend.onrender.com';
 
 // Local storage utilities for development
 const SALES_STORAGE_KEY = 'maish_sales_data';
