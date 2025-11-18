@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://maish-sale-backend.onrender.com';
+const API_BASE_URL = import.meta.env.DEV ? (import.meta.env.VITE_API_URL || 'http://localhost:3000') : '';
 
 // Local storage utilities for development
 const SALES_STORAGE_KEY = 'maish_sales_data';

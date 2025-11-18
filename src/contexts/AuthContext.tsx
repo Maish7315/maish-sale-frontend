@@ -14,7 +14,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (username: string, password: string) => Promise<void>;
-  signUp: (username: string, password: string) => Promise<void>;
+  signUp: (username: string, fullName: string, password: string) => Promise<void>;
   updateAvatar: (avatarFile: File) => Promise<void>;
   signOut: () => void;
   isAuthenticated: boolean;
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUp = async (username: string, password: string) => {
+  const signUp = async (username: string, fullName: string, password: string) => {
     try {
       setLoading(true);
 
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Attempt backend signup
-      const result = await signup({ username, password });
+      const result = await signup({ username, full_name: fullName, password });
 
       // Set user session from backend response
       setUser({

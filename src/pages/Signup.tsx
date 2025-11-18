@@ -12,6 +12,7 @@ import { isWeakPassword } from '@/services/api';
 
 const signupSchema = z.object({
   username: z.string().trim().min(2, { message: 'Username must be at least 2 characters' }).max(100),
+  fullName: z.string().trim().min(2, { message: 'Full name must be at least 2 characters' }).max(100),
   password: z.string().regex(/^\d+$/, { message: 'Password must contain only numbers' }).min(4, { message: 'Password must be at least 4 digits' }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -24,6 +25,7 @@ const signupSchema = z.object({
 
 const Signup = () => {
   const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,10 +42,10 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const validated = signupSchema.parse({ username, password, confirmPassword });
+      const validated = signupSchema.parse({ username, fullName, password, confirmPassword });
       setLoading(true);
 
-      await signUp(validated.username, validated.password);
+      await signUp(validated.username, validated.fullName, validated.password);
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
@@ -77,6 +79,18 @@ const Signup = () => {
                 placeholder="johndoe"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="John Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 required
                 disabled={loading}
               />
